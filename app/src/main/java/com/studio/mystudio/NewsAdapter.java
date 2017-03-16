@@ -49,6 +49,9 @@ public class NewsAdapter extends BaseAdapter implements AbsListView.OnScrollList
     private int mStart, mEnd;
     public static String[] URLS;
 
+    //判断当前是否是第一次启动listView
+    private boolean mFirstIn;
+
     public NewsAdapter(Context context, List<NewsBean> data, ListView listView) {
         this.mList = data;
         this.inflater = LayoutInflater.from(context);
@@ -60,6 +63,8 @@ public class NewsAdapter extends BaseAdapter implements AbsListView.OnScrollList
         }
         //注册滑动事件监听
         listView.setOnScrollListener(this);
+
+        mFirstIn = true;
     }
 
     @Override
@@ -125,6 +130,11 @@ public class NewsAdapter extends BaseAdapter implements AbsListView.OnScrollList
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         mStart = firstVisibleItem;
         mEnd = firstVisibleItem + visibleItemCount;
+        //首次进入程序加载listView
+        if (mFirstIn && visibleItemCount > 0) {
+            mImgLoader.loadImages(mStart, mEnd);
+            mFirstIn = false;
+        }
     }
 
     class ViewHolder {
