@@ -6,6 +6,7 @@ import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.util.LruCache;
 import android.widget.ImageView;
 
 import java.io.BufferedInputStream;
@@ -44,6 +45,42 @@ public class ImgLoader {
 
     private ImageView mImageView;
     private String mUrl;
+
+    //使用LruCache来缓存图片，Key=图片的url，value=要缓存的内容
+    //1.创建LurCache对象
+    private LruCache<String, Bitmap> mCache;
+
+    public ImgLoader() {
+
+        //2.在构造方法中初始化LruCache
+        //2.1获取当前应用的内存大小
+        int maxMemory = (int) Runtime.getRuntime().maxMemory();
+        //2.2创建缓存器的大小
+        int cacheSize = maxMemory / 4;
+        //2.3初始化LurCache对象
+        mCache = new LruCache<String, Bitmap>(cacheSize) {
+            //2.4重写sizeOf方法，这个方法用于获取每一个存入的对象的大小
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                //在每次存入缓存时调用，把bitmap的大小传进去
+                return value.getByteCount();
+            }
+        };
+    }
+
+    //在使用LurCache之前要执行两个方法1.将内容保存到LurCache中，2.从LurCache中得到保存的数据
+    //3.把内容保存到LurCache中
+    public void addBitmapToCache(String url, Bitmap bitmap) {
+        //判断当前缓存是否存在
+        if (getBitmapFromCache(url) == null) {
+            mCache.put(url, bitmap);
+        }
+    }
+
+    //4.从LurCache中得到保存的数据
+    public Bitmap getBitmapFromCache(String url) {
+        return mCache.get(url);
+    }
 
     private Handler handler = new Handler() {
         @Override
@@ -104,7 +141,14 @@ public class ImgLoader {
 
     //使用AsyncTask实现异步加载方法
     public void showImgByAsyncTask(ImageView imageView, String url) {
-        new NewsAsyncTask(imageView, url).execute(url);
+        //5.使用LurCache的getBitmapFromCache方法，cache中获取bitmap
+        Bitmap bitmap = getBitmapFromCache(url);
+        if (bitmap == null) {
+            //如果缓存中没有url(key)，只能去网络访问，否则把bitmap设置给imageView
+            new NewsAsyncTask(imageView, url).execute(url);
+        } else {
+            imageView.setImageBitmap(bitmap);
+        }
     }
 
     //参数1：请求网址，参数2：是否需要记录中间过程，Void是不需要记录，参数3：返回的值是bitmap图片
@@ -120,7 +164,12 @@ public class ImgLoader {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            return getBitmapFromURL(params[0]);
+            //6.把下载好的图片放入cache中
+            Bitmap bitmap = getBitmapFromURL(params[0]);
+            if (bitmap != null) {
+                addBitmapToCache(params[0], bitmap);
+            }
+            return bitmap;
         }
 
         @Override

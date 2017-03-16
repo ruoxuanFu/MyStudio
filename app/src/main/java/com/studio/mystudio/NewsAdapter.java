@@ -1,7 +1,6 @@
 package com.studio.mystudio;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,10 +40,13 @@ public class NewsAdapter extends BaseAdapter {
     private List<NewsBean> mList;
     private LayoutInflater inflater;
 
+    //7.在adapter中使用LurCache
+    private ImgLoader mImgLoader;
+
     public NewsAdapter(Context context, List<NewsBean> data) {
         this.mList = data;
         this.inflater = LayoutInflater.from(context);
-
+        mImgLoader = new ImgLoader();
     }
 
     @Override
@@ -84,7 +86,9 @@ public class NewsAdapter extends BaseAdapter {
         //使用多线程的方式加载图片
         //new ImgLoader().showImgByThread(viewHolder.imgIcon, mList.get(position).getIcon());
         //使用AsyncTask的方式加载图片
-        new ImgLoader().showImgByAsyncTask(viewHolder.imgIcon, mList.get(position).getIcon());
+        //new ImgLoader().showImgByAsyncTask(viewHolder.imgIcon, mList.get(position).getIcon());
+
+        mImgLoader.showImgByAsyncTask(viewHolder.imgIcon, mList.get(position).getIcon());
 
         viewHolder.tvTitle.setText(mList.get(position).getTitle());
         viewHolder.tvContent.setText(mList.get(position).getContent());
