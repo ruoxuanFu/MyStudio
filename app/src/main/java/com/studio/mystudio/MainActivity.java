@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<NewsBean> newsBeen) {
             super.onPostExecute(newsBeen);
-            NewsAdapter adapter = new NewsAdapter(MainActivity.this,newsBeen);
+            NewsAdapter adapter = new NewsAdapter(MainActivity.this, newsBeen, news_listView);
             news_listView.setAdapter(adapter);
         }
     }
@@ -59,12 +59,14 @@ public class MainActivity extends AppCompatActivity {
             String jsonString = readStream(new URL(url).openStream());
 
             NewsInfo info = NewsJson.handleInfoResponse(jsonString);
-            for (int i = 0;i<info.getData().size();i++) {
-                newsBean = new NewsBean();
-                newsBean.icon = info.getData().get(i).getPicSmall();
-                newsBean.title = info.getData().get(i).getName();
-                newsBean.content = info.getData().get(i).getDescription();
-                newsInfoList.add(newsBean);
+            for (int i = 0; i < info.getData().size(); i++) {
+                for (int j = 0; j < info.getData().size(); j++) {
+                    newsBean = new NewsBean();
+                    newsBean.icon = info.getData().get(j).getPicSmall();
+                    newsBean.title = info.getData().get(j).getName();
+                    newsBean.content = info.getData().get(j).getDescription();
+                    newsInfoList.add(newsBean);
+                }
             }
 
         } catch (IOException e) {
