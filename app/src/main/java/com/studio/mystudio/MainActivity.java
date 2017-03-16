@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //参数1：请求网址，参数2：是否需要记录中间过程，Void是不需要记录，参数3：bean对象的封装
+    //参数1：请求网址，参数2：是否需要记录中间过程，Void是不需要记录，参数3：返回的值是bean对象的封装
     class NewsAsyncTask extends AsyncTask<String, Void, List<NewsBean>> {
 
         //此方法的参数params是传递进来的String，现在只有一个，就是请求的网址URL

@@ -3,6 +3,7 @@ package com.studio.mystudio;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ImageView;
@@ -99,6 +100,36 @@ public class ImgLoader {
         }
 
         return null;
+    }
+
+    //使用AsyncTask实现异步加载方法
+    public void showImgByAsyncTask(ImageView imageView, String url) {
+        new NewsAsyncTask(imageView, url).execute(url);
+    }
+
+    //参数1：请求网址，参数2：是否需要记录中间过程，Void是不需要记录，参数3：返回的值是bitmap图片
+    private class NewsAsyncTask extends AsyncTask<String, Void, Bitmap> {
+
+        private ImageView TImageView;
+        private String TUrl;
+
+        public NewsAsyncTask(ImageView imageView, String url) {
+            TImageView = imageView;
+            TUrl = url;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            return getBitmapFromURL(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if (TImageView.getTag().equals(TUrl)) {
+                TImageView.setImageBitmap(bitmap);
+            }
+        }
     }
 
 }

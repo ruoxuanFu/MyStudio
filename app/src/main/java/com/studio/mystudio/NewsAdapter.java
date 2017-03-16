@@ -81,7 +81,11 @@ public class NewsAdapter extends BaseAdapter {
         //把imageView和对应的URL绑定
         viewHolder.imgIcon.setTag(mList.get(position).getIcon());
 
-        new ImgLoader().showImgByThread(viewHolder.imgIcon, mList.get(position).getIcon());
+        //使用多线程的方式加载图片
+        //new ImgLoader().showImgByThread(viewHolder.imgIcon, mList.get(position).getIcon());
+        //使用AsyncTask的方式加载图片
+        new ImgLoader().showImgByAsyncTask(viewHolder.imgIcon, mList.get(position).getIcon());
+
         viewHolder.tvTitle.setText(mList.get(position).getTitle());
         viewHolder.tvContent.setText(mList.get(position).getContent());
 
