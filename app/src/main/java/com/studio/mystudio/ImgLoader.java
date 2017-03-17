@@ -6,6 +6,7 @@ import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -194,6 +195,7 @@ public class ImgLoader {
 /*            if (TImageView.getTag().equals(TUrl)) {
                 TImageView.setImageBitmap(bitmap);
             }*/
+            //在adapter中，url和imageView已经绑定了
             ImageView imageView = (ImageView) mListView.findViewWithTag(TUrl);
             if (imageView != null && bitmap != null) {
                 imageView.setImageBitmap(bitmap);
